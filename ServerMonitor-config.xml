@@ -1,0 +1,33 @@
+<?xml version='1.0'?>
+<ServerMonitor>
+	<config>
+		<email>
+			<sender>monitor@example.com</sender>
+			<notify>
+				<addr>person@example.com</addr>
+			</notify>
+		</email>
+		<server>
+			<name>Master Web Design</name>
+			<domain>www.masterwebdesign.net</domain>
+			<port>80</port>
+			<port>25</port>
+			<url>http://www.masterwebdesign.net/</url>
+			<url>http://www.masterwebdesign.net/portfolio</url>
+		</server>
+		<server>
+			<name>MerchantHound</name>
+			<domain>www.merchanthound.com</domain>
+			<port>80</port>
+			<url>http://www.merchanthound.com</url>
+			<url>http://electronics.merchanthound.com/asdghgas</url>
+		</server>
+		<server>
+			<name>MH Skin</name>
+			<domain>compare-prices.tomshardware.com</domain>
+			<port>80</port>
+			<url>http://compare-prices.tomshardware.com/</url>
+			<url>http://compare-prices.tomshardware.com/browse/electronics</url>
+		</server>
+	</config>
+</ServerMonitor>

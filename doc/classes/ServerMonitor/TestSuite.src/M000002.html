@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>test_port (ServerMonitor::TestSuite)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File ServerMonitor.rb, line 86</span>
+                <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">test_port</span>(<span class="ruby-identifier">domain</span>,<span class="ruby-identifier">port</span>)
+                        <span class="ruby-identifier">msg</span> = <span class="ruby-node">&quot; * Testing #{domain}:#{port} =&gt; &quot;</span>
+                        <span class="ruby-identifier">now</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
+                        <span class="ruby-identifier">result</span> = <span class="ruby-identifier">get_port</span>(<span class="ruby-identifier">domain</span>,<span class="ruby-identifier">port</span>)
+                        <span class="ruby-identifier">elapsed</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">now</span>
+                        <span class="ruby-identifier">msg</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;#{result ? 'OK' : 'Failed!'} (#{elapsed}s)  [#{Time.now}]&quot;</span>
+                        <span class="ruby-ivar">@log</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">msg</span>
+                        [<span class="ruby-identifier">result</span>,<span class="ruby-identifier">elapsed</span>]
+                <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

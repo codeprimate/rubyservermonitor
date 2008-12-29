@@ -1,0 +1,17 @@
+#summary Basic Usage Instructions
+
+= Configuration =
+
+Program configuration uses a properly formatted XML file.  See _ServerMonitor-config.xml_ included in the source archive for an example.  Specify server name and domain, and the URLs and ports to test.
+
+= Command Line =
+
+Run _ruby server_monitor.rb --config path/to/configfile.xml --log path/to/logfile.xml --xsl path/or/url/for/log.xsl_
+
+= Output = 
+
+Outputs or appends to logfile.xml.  To view the xml file in a web browser, the xsl path must be valid, and within the same domain as the xml file (browser security requirement).  If the xml file will be viewed from a http url, the path specified for the xsl file when running the program must refer to the same domain (whether internet or file://).  Please note that subsequent runs will not modify the the xsl path in the xml logfile.
+
+= Scripting =
+
+You may specify the _--quiet_ commandline option to disable verbose output.

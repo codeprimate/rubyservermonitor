@@ -213,7 +213,7 @@ module ServerMonitor
 				docroot = doc.elements['ServerMonitor']
 			end
 			docroot = add_report_xml(docroot,servers)
-			out.puts doc.to_s(0)
+			out.puts doc.to_s
 			ensure
 				out.close
 		end

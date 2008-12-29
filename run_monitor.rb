@@ -31,10 +31,12 @@ class MonitorRunner
 		@monitor.test_servers
 		@monitor.log_report(@config[:log])
 		print_results unless @quiet
-		unless @monitor.success?
-			@monitor.email_report(": one or more servers failed!") 
-			puts "Sending notification emails" unless @quiet
-		end
+		unless @no_email
+  		unless @monitor.success?
+  			@monitor.email_report(": one or more servers failed!") 
+  			puts "Sending notification emails" unless @quiet
+  		end
+  	end
 	end
 
 	def print_results
@@ -61,9 +63,10 @@ class MonitorRunner
 
 	def get_opts
 		GetoptLong.new(
-			['--config', '-c', GetoptLong::OPTIONAL_ARGUMENT],
-			['--log', '-l', GetoptLong::OPTIONAL_ARGUMENT],
+			['--config', '-c', GetoptLong::REQUIRED_ARGUMENT],
+			['--log', '-l', GetoptLong::REQUIRED_ARGUMENT],
 			['--quiet', '-q', GetoptLong::NO_ARGUMENT],
+			['--no-email', GetoptLong::NO_ARGUMENT],
 			['--help', '-h', GetoptLong::NO_ARGUMENT],
 			['--xslt','-x',GetoptLong::OPTIONAL_ARGUMENT])
 	end
@@ -76,6 +79,8 @@ class MonitorRunner
 					options[:configfile] = arg
 				when '-c'
 					options[:configfile] = arg
+				when '--no-email'
+				  @no_email = true
 				when '--log'
 					options[:log] = arg
 				when '-l'

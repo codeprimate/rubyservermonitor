@@ -91,7 +91,7 @@ module ServerMonitor
 			elapsed = Time.now - now
 			msg += "#{result ? 'OK' : 'Failed!'} (#{elapsed}s)  [#{Time.now}]"
 			@log << msg
-      @fail_log << "#{domain}:#{port} Down #{Time.now}" unless result
+      @fail_log << "#{domain}:#{port} Down #{Time.now.strftime("%H:%M:%S")}" unless result == true
 			[result,elapsed]
 		end
 
@@ -102,7 +102,7 @@ module ServerMonitor
 			elapsed = Time.now - now
 			msg += "#{result ? 'OK' : 'Failed!'} (#{elapsed}s)  [#{Time.now}]"
 			@log << msg
-      @fail_log << "#{url} Down #{Time.now}" unless result
+      @fail_log << "#{url} Down #{Time.now.strftime("%H:%M:%S")}" unless result == true
 			[result,elapsed]
 		end
 
@@ -119,7 +119,6 @@ module ServerMonitor
 			http.use_ssl = true if https
 			response = http.request(req)
 
-			#response = Net::HTTP.get_response(URI.parse(uri_str))
 			case response
 				when Net::HTTPSuccess     then true
 				when Net::HTTPRedirection then get_url(response['location'], limit - 1)
@@ -248,7 +247,7 @@ module ServerMonitor
 		# Email a report to all of the configuration specified email addresses with an optional custom message in the title
 		def email_failure_report(message="")
 			@email_addr.each do |email|
-				send_email(:to => email, :subject => ("Server Monitor Failure Report" + message), :message => @report.fail_text)
+				send_email(:to => email, :subject => ("Servers Down!" + message), :message => @report.fail_text)
 			end
 		end
 
@@ -381,7 +380,7 @@ module ServerMonitor
 		#	:message => ""}
 		def send_email(opts)
 			options = { :from => @email_sender, 
-			:from_alias => "Server Monitor Notifier",
+			:from_alias => "ServerMon",
 			:to => "",
 			:to_alias => "",
 			:subject => "",
@@ -391,20 +390,23 @@ module ServerMonitor
 
 			msg = <<END_OF_MESSAGE
 From: #{options[:from_alias]} <#{options[:from]}>
-To: #{options[:to_alias]} <#{options[:to]}>
+To: #{options[:to]}
 Subject: #{options[:subject]}
-	
+
 #{options[:message]}
 END_OF_MESSAGE
 
-begin	
-		Net::SMTP.start('localhost') do |smtp|
-			smtp.send_message options[:message], options[:from], options[:to]
-		end
-	rescue
-	  puts "!!!Error connecting to local SMTP server. No notifications sent!"
+  begin	
+  		Net::SMTP.start('localhost') do |smtp|
+  			smtp.send_message msg, options[:from], options[:to]
+  		end
+  	rescue
+  	  puts "!!!Error connecting to local SMTP server. No notifications sent!"
+  	  puts msg
+  	  puts "======================="
+    end
   end
-end
+  
 	true
 	#rescue
 	#	false

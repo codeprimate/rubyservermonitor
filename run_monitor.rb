@@ -33,7 +33,7 @@ class MonitorRunner
 		print_results unless @quiet
 		unless @no_email
   		unless @monitor.success?
-  			@monitor.email_report(": one or more servers failed!") 
+  			@monitor.email_failure_report
   			puts "Sending notification emails" unless @quiet
   		end
   	end

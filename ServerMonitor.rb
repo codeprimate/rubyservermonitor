@@ -11,7 +11,7 @@ module ServerMonitor
 
 	Port = Struct.new("Port",:number,:tested,:success, :time)
 	Url = Struct.new("Url",:url, :tested, :success, :time)
-	MonitorReport = Struct.new("MonitorReport", :xml, :text, :delimited)
+	MonitorReport = Struct.new("MonitorReport", :xml, :text, :fail_text, :delimited)
 
 	class Server
 		attr_reader :name, :ports, :urls
@@ -77,10 +77,11 @@ module ServerMonitor
 
 	class TestSuite
 
-		attr_reader :log
+		attr_reader :log, :fail_log
 
 		def initialize
 			@log = ["Starting Test Suite at #{Time.now}\n================================="]
+			@fail_log = []
 		end
 
 		def test_port(domain,port)
@@ -90,6 +91,7 @@ module ServerMonitor
 			elapsed = Time.now - now
 			msg += "#{result ? 'OK' : 'Failed!'} (#{elapsed}s)  [#{Time.now}]"
 			@log << msg
+      @fail_log << "#{domain}:#{port} Down #{Time.now}" unless result
 			[result,elapsed]
 		end
 
@@ -100,6 +102,7 @@ module ServerMonitor
 			elapsed = Time.now - now
 			msg += "#{result ? 'OK' : 'Failed!'} (#{elapsed}s)  [#{Time.now}]"
 			@log << msg
+      @fail_log << "#{url} Down #{Time.now}" unless result
 			[result,elapsed]
 		end
 
@@ -171,6 +174,7 @@ module ServerMonitor
 				end
 			end
 			@report.text = ts.log.join("\n")
+			@report.fail_text = ts.fail_log.join("\n")
 			@report.delimited = generate_delimited_report(@servers)
 			@report.xml = generate_xml_report(@servers)
 		end
@@ -238,6 +242,13 @@ module ServerMonitor
 		def email_report(message="")
 			@email_addr.each do |email|
 				send_email(:to => email, :subject => ("Server Monitor Report" + message), :message => @report.text)
+			end
+		end
+		
+		# Email a report to all of the configuration specified email addresses with an optional custom message in the title
+		def email_failure_report(message="")
+			@email_addr.each do |email|
+				send_email(:to => email, :subject => ("Server Monitor Failure Report" + message), :message => @report.fail_text)
 			end
 		end
 
@@ -385,10 +396,14 @@ Subject: #{options[:subject]}
 	
 #{options[:message]}
 END_OF_MESSAGE
-	
+
+begin	
 		Net::SMTP.start('localhost') do |smtp|
 			smtp.send_message options[:message], options[:from], options[:to]
 		end
+	rescue
+	  puts "!!!Error connecting to local SMTP server. No notifications sent!"
+  end
 end
 	true
 	#rescue
